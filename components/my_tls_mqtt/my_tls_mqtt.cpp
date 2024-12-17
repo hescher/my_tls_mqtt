@@ -112,23 +112,26 @@ void MyTLSMQTTClient::send_discovery_message_() {
 }
 
 void MyTLSMQTTClient::connect_to_mqtt_() {
-  ESP_LOGI(TAG, "Attempting MQTT connection with authentication...");
-
-  // Will Message setup
-  this->mqtt_client.setWill((this->device_name + "/status").c_str(), "offline", true);
-
-  if (this->mqtt_client.connect(this->broker_host.c_str(), this->broker_port, this->username.c_str(), this->password.c_str())) {
-    ESP_LOGI(TAG, "MQTT connected successfully!");
-
-    // Birth Message
-    this->mqtt_client.publish((this->device_name + "/status").c_str(), "online", true);
-
-    // Send Discovery Message
-    this->send_discovery_message_();
+  if (this->username_.empty() || this->password_.empty()) {
+    printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
+    if (!this->mqtt_client.connect("esphome_client")) {
+      printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
+      return;
+    }
   } else {
-    ESP_LOGE(TAG, "MQTT connection failed, retrying...");
+    printf("[INFO][%s] Attempting MQTT connection with authentication...\n", TAG);
+    if (!this->mqtt_client.connect("esphome_client", this->username_.c_str(), this->password_.c_str())) {
+      printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
+      return;
+    }
   }
+  this->send_discovery_message_();
+  printf("[INFO][%s] MQTT connected successfully!\n", TAG);
+  
 }
+
+
+
 
 
 void MyTLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host = host; }
