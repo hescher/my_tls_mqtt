@@ -17,9 +17,9 @@ tls_mqtt:
   port: 8883                                            # TLS-Port
   username: !secret hivemqtt_username                   # Hive Username
   password: !secret hivemqtt_password                   # Hive Passwort
-  (birth_message:
-    topic: "$devicename/status"
+  birth_message:
+    topic: "devicename/status"
     payload: "online"
   will_message:
-    topic: "$devicename/status"
-    payload: "offline")
+    topic: "devicename/status"
+    payload: "offline"
