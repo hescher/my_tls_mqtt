@@ -72,14 +72,14 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 }
 
 void MyTLSMQTTClient::setup() {
-  // WLAN-Verbindung starten
-  if (!WiFi.isConnected()) {
-    esphome::ESP_LOGI("my_tls_mqtt", "Starting WiFi...");
-    WiFi.begin();  // WLAN-Verbindung manuell starten
-    while (!WiFi.isConnected()) {
-      delay(500);
-      esphome::ESP_LOGI("my_tls_mqtt", "Waiting for WiFi...");
-    }
+  // Starte die WLAN-Verbindung manuell
+  esphome::ESP_LOGI("my_tls_mqtt", "Starting WiFi...");
+  WiFi.begin();  // Explizite Initialisierung von WLAN
+
+  // Warte auf WLAN-Verbindung
+  while (!WiFi.isConnected()) {
+    delay(500);
+    esphome::ESP_LOGI("my_tls_mqtt", "Waiting for WiFi...");
   }
   
   esphome::ESP_LOGI("my_tls_mqtt", "WiFi connected, starting NTP sync...");
