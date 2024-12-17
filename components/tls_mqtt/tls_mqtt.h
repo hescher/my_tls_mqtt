@@ -20,6 +20,8 @@ class TLSMQTTClient : public esphome::Component {
   void set_broker_port(uint16_t port);
   void set_username(const std::string &username);
   void set_password(const std::string &password);
+  void set_birth_message(const std::string &birth_topic, const std::string &birth_message);
+  void set_will_message(const std::string &will_topic, const std::string &will_message);
 
  private:
   // Private Methoden
