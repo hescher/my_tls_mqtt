@@ -108,70 +108,40 @@ void TLSMQTTClient::publish_message(const std::string &topic, const std::string 
 
 
 void TLSMQTTClient::connect_to_mqtt_() {
-  if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
-    // Konfiguriere die Will-Message
-    this->mqtt_client.setWill(this->will_topic_.c_str(), this->will_payload_.c_str(), true);
-  }
+  printf("[INFO][%s] Attempting MQTT connection...\n", TAG);
 
-  if (this->username_.empty() || this->password_.empty()) {
-    printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
-    if (!this->mqtt_client.connect("esphome_client")) {
-      printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
-      return;
+  bool connected = false;
+
+  if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
+    // Mit Last-Will-and-Testament (LWT)
+    if (this->username_.empty() || this->password_.empty()) {
+      // Ohne Authentifizierung
+      connected = this->mqtt_client.connect("esphome_client", this->will_topic_.c_str(), 0, true, this->will_payload_.c_str());
+    } else {
+      // Mit Authentifizierung
+      connected = this->mqtt_client.connect("esphome_client", this->username_.c_str(), this->password_.c_str(),
+                                            this->will_topic_.c_str(), 0, true, this->will_payload_.c_str());
     }
   } else {
-    printf("[INFO][%s] Attempting MQTT connection with authentication...\n", TAG);
-    if (!this->mqtt_client.connect("esphome_client", this->username_.c_str(), this->password_.c_str())) {
-      printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
-      return;
+    // Ohne Last-Will-and-Testament
+    if (this->username_.empty() || this->password_.empty()) {
+      // Ohne Authentifizierung
+      connected = this->mqtt_client.connect("esphome_client");
+    } else {
+      // Mit Authentifizierung
+      connected = this->mqtt_client.connect("esphome_client", this->username_.c_str(), this->password_.c_str());
     }
   }
 
-  printf("[INFO][%s] MQTT connected successfully!\n", TAG);
-
-bool connected;
-if (this->username_.empty() || this->password_.empty()) {
-    printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
-
-    // LWT setzen, falls vorhanden
-    if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
-        connected = this->mqtt_client.connect("esphome_client", 
-                                              this->will_topic_.c_str(), 
-                                              this->will_payload_.c_str(), 
-                                              true);
-    } else {
-        connected = this->mqtt_client.connect("esphome_client");
-    }
-} else {
-    printf("[INFO][%s] Attempting MQTT connection with authentication...\n", TAG);
-
-    // LWT setzen, falls vorhanden
-    if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
-        connected = this->mqtt_client.connect("esphome_client", 
-                                              this->username_.c_str(), 
-                                              this->password_.c_str(), 
-                                              this->will_topic_.c_str(), 
-                                              this->will_payload_.c_str(), 
-                                              true);
-    } else {
-        connected = this->mqtt_client.connect("esphome_client", 
-                                              this->username_.c_str(), 
-                                              this->password_.c_str());
-    }
-}
-
-if (!connected) {
+  if (connected) {
+    printf("[INFO][%s] MQTT connected successfully!\n", TAG);
+    this->publish_message("test/topic", "Hello, MQTT!");
+  } else {
     printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
-    return;
-}
-printf("[INFO][%s] MQTT connected successfully!\n", TAG);
-
-// Birth-Message senden, falls definiert
-if (!this->birth_topic_.empty() && !this->birth_payload_.empty()) {
-    this->publish_message(this->birth_topic_, this->birth_payload_);
+  }
 }
 
-}
+
 
 
 
