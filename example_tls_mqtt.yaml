@@ -1,1 +1,57 @@
-Will be replaced soon
+substitutions:
+  devicename: stromzaehler
+  friendly_name: stromzaehler
+
+esphome:
+  name: ${devicename}
+  platformio_options:
+    lib_deps:
+    - knolleary/PubSubClient@^2.8
+
+esp8266:
+  board: nodemcuv2
+  framework: 
+    version: dev
+
+logger:
+  baud_rate: 115200
+  level: VERBOSE
+  logs:
+    wifi: VERBOSE
+    mqtt: VERBOSE
+    tls-mqtt: VERBOSE
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  manual_ip:
+    static_ip: 192.168.178.21
+    gateway: 192.168.178.1
+    subnet: 255.255.255.0
+    dns1: 1.1.1.1
+  enable_on_boot: true
+  reboot_timeout: 0s
+  fast_connect: true
+  id: wifi_component
+
+external_components:
+  - source: github://hescher/tls_mqtt@main
+    refresh: 0s
+    components: [tls_mqtt]
+
+tls_mqtt:
+  host: "abcdefghijklmnopqrstuvwxyz.s1.eu.hivemq.cloud"
+  port: 8883        
+  username: !secret hivemqtt_username
+  password: !secret hivemqtt_password
+  id: tls_mqtt_client
+  birth_message:
+    topic: "$devicename/status"
+    payload: "online"
+  will_message:
+    topic: "$devicename/status"
+    payload: "offline"
+
+ota:
+  platform: esphome
+  password: "OTAPASSWORD"
