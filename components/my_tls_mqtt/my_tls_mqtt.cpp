@@ -96,21 +96,6 @@ void MyTLSMQTTClient::loop() {
   }
 }
 
-void MyTLSMQTTClient::send_discovery_message_() {
-  std::string discovery_topic = "homeassistant/sensor/" + this->device_name + "/config";
-  std::string payload = R"({
-    "name": ")" + this->device_name + R"(",
-    "state_topic": ")" + this->device_name + "/status" + R"(",
-    "unique_id": ")" + this->device_name + R"(",
-    "device": {
-      "identifiers": [")" + this->device_name + R"("],
-      "name": ")" + this->device_name + R"("
-    }
-  })";
-
-  this->mqtt_client.publish(discovery_topic.c_str(), payload.c_str(), true);  // Retained message
-}
-
 void MyTLSMQTTClient::connect_to_mqtt_() {
   if (this->username_.empty() || this->password_.empty()) {
     printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
@@ -125,14 +110,9 @@ void MyTLSMQTTClient::connect_to_mqtt_() {
       return;
     }
   }
-  this->send_discovery_message_();
   printf("[INFO][%s] MQTT connected successfully!\n", TAG);
   
 }
-
-
-
-
 
 void MyTLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host = host; }
 void MyTLSMQTTClient::set_broker_port(uint16_t port) { this->broker_port = port; }
