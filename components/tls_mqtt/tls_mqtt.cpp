@@ -104,7 +104,13 @@ void TLSMQTTClient::publish_message(const std::string &topic, const std::string 
   }
 }
 
+
 void TLSMQTTClient::connect_to_mqtt_() {
+  if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
+    // Konfiguriere die Will-Message
+    this->mqtt_client.setWill(this->will_topic_.c_str(), this->will_payload_.c_str(), true);
+  }
+
   if (this->username_.empty() || this->password_.empty()) {
     printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
     if (!this->mqtt_client.connect("esphome_client")) {
@@ -118,14 +124,30 @@ void TLSMQTTClient::connect_to_mqtt_() {
       return;
     }
   }
+
   printf("[INFO][%s] MQTT connected successfully!\n", TAG);
-  this->publish_message("test/topic", "Hello, MQTT!");
-  
+
+  // Birth-Message senden, falls definiert
+  if (!this->birth_topic_.empty() && !this->birth_payload_.empty()) {
+    this->publish_message(this->birth_topic_, this->birth_payload_);
+  }
 }
+
+
+
 
 void TLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host = host; }
 void TLSMQTTClient::set_broker_port(uint16_t port) { this->broker_port = port; }
 void TLSMQTTClient::set_username(const std::string &username) { this->username_ = username; }
 void TLSMQTTClient::set_password(const std::string &password) { this->password_ = password; }
+void TLSMQTTClient::set_birth_message(const std::string &topic, const std::string &payload) {
+  this->birth_topic_ = topic;
+  this->birth_payload_ = payload;
+}
+
+void TLSMQTTClient::set_will_message(const std::string &topic, const std::string &payload) {
+  this->will_topic_ = topic;
+  this->will_payload_ = payload;
+}
 
 }  // namespace tls_mqtt
