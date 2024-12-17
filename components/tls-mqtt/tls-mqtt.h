@@ -7,9 +7,9 @@
 #include <time.h>
 #include <string>
 
-namespace my_tls_mqtt {
+namespace tls-mqtt {
 
-class MyTLSMQTTClient : public esphome::Component {
+class TLSMQTTClient : public esphome::Component {
  public:
   void setup() override;
   void loop() override;
