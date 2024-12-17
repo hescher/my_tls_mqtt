@@ -1,3 +1,5 @@
+#pragma once
+
 #include "esphome.h"
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
