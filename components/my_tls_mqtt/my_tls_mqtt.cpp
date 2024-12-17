@@ -96,23 +96,40 @@ void MyTLSMQTTClient::loop() {
   }
 }
 
-void MyTLSMQTTClient::connect_to_mqtt_() {
-  if (this->username_.empty() || this->password_.empty()) {
-    printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
-    if (!this->mqtt_client.connect("esphome_client")) {
-      printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
-      return;
+void MyTLSMQTTClient::send_discovery_message_() {
+  std::string discovery_topic = "homeassistant/sensor/" + this->device_name + "/config";
+  std::string payload = R"({
+    "name": ")" + this->device_name + R"(",
+    "state_topic": ")" + this->device_name + "/status" + R"(",
+    "unique_id": ")" + this->device_name + R"(",
+    "device": {
+      "identifiers": [")" + this->device_name + R"("],
+      "name": ")" + this->device_name + R"("
     }
-  } else {
-    printf("[INFO][%s] Attempting MQTT connection with authentication...\n", TAG);
-    if (!this->mqtt_client.connect("esphome_client", this->username_.c_str(), this->password_.c_str())) {
-      printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
-      return;
-    }
-  }
+  })";
 
-  printf("[INFO][%s] MQTT connected successfully!\n", TAG);
+  this->mqtt_client.publish(discovery_topic.c_str(), payload.c_str(), true);  // Retained message
 }
+
+void MyTLSMQTTClient::connect_to_mqtt_() {
+  ESP_LOGI(TAG, "Attempting MQTT connection with authentication...");
+
+  // Will Message setup
+  this->mqtt_client.setWill((this->device_name + "/status").c_str(), "offline", true);
+
+  if (this->mqtt_client.connect(this->broker_host.c_str(), this->broker_port, this->username.c_str(), this->password.c_str())) {
+    ESP_LOGI(TAG, "MQTT connected successfully!");
+
+    // Birth Message
+    this->mqtt_client.publish((this->device_name + "/status").c_str(), "online", true);
+
+    // Send Discovery Message
+    this->send_discovery_message_();
+  } else {
+    ESP_LOGE(TAG, "MQTT connection failed, retrying...");
+  }
+}
+
 
 void MyTLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host = host; }
 void MyTLSMQTTClient::set_broker_port(uint16_t port) { this->broker_port = port; }
