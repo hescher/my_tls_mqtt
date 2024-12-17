@@ -6,7 +6,10 @@ namespace my_tls_mqtt {
 
 static const char *TAG = "my_tls_mqtt";
 
-static const char root_ca[] PROGMEM = R"EOF(
+void MyTLSMQTTClient::setup() {
+  printf("[INFO][%s] Setup started, waiting for WiFi...\n", TAG);
+
+  static const char root_ca[] PROGMEM = R"EOF(
 MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw
 TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh
 cmNoIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDEwHhcNMTUwNjA0MTEwNDM4
@@ -39,12 +42,17 @@ emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
 -----END CERTIFICATE-----
 )EOF";
 
-void MyTLSMQTTClient::setup() {
-  printf("[INFO][%s] Setup started, waiting for WiFi...\n", TAG);
-
   this->trust_anchors_ = new BearSSL::X509List(root_ca);
+  if (!this->trust_anchors_) {
+    printf("[ERROR][%s] Failed to load Root CA certificate!\n", TAG);
+    return;
+  }
+
+  printf("[INFO][%s] Root CA certificate loaded successfully.\n", TAG);
+
   this->wifi_client.setTrustAnchors(this->trust_anchors_);
 
+  // MQTT-Client initialisieren
   this->mqtt_client.setClient(this->wifi_client);
   this->mqtt_client.setServer(this->broker_host.c_str(), this->broker_port);
 
