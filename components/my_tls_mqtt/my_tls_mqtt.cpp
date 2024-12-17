@@ -54,20 +54,24 @@ void MyTLSMQTTClient::reconnect() {
   while (!mqtt_client.connected()) {
     esphome::ESP_LOGI("my_tls_mqtt", "Attempting MQTT connection to %s...", broker_host.c_str());
 
-    // Will-Message direkt beim connect setzen
+    const char* user = username.empty() ? nullptr : username.c_str();
+    const char* pass = password.empty() ? nullptr : password.c_str();
+    const char* will_topic_ptr = will_topic.empty() ? nullptr : will_topic.c_str();
+    const char* will_payload_ptr = will_payload.empty() ? nullptr : will_payload.c_str();
+
     bool connected = mqtt_client.connect(
-      "ESP_TLS_Client",                          // Client-ID
-      username.c_str(),                          // Benutzername
-      password.c_str(),                          // Passwort
-      will_topic.empty() ? nullptr : will_topic.c_str(),  // Will-Topic
-      0,                                         // QoS für Will-Message
-      true,                                      // Retain für Will-Message
-      will_payload.empty() ? nullptr : will_payload.c_str()  // Will-Payload
+      "ESP_TLS_Client",          // Client-ID
+      user,                      // Benutzername (optional)
+      pass,                      // Passwort (optional)
+      will_topic_ptr,            // Will-Topic
+      0,                         // QoS für Will-Message
+      true,                      // Retain für Will-Message
+      will_payload_ptr           // Will-Payload
     );
 
     if (connected) {
       esphome::ESP_LOGI("my_tls_mqtt", "Connected to MQTT Broker: %s", broker_host.c_str());
-
+      
       // Birth-Message senden
       if (!birth_topic.empty() && !birth_payload.empty()) {
         mqtt_client.publish(birth_topic.c_str(), birth_payload.c_str(), true);
@@ -79,5 +83,6 @@ void MyTLSMQTTClient::reconnect() {
     }
   }
 }
+
 
 }  // namespace my_tls_mqtt
