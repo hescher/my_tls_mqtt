@@ -1,12 +1,12 @@
-#include "my_tls_mqtt.h"
+#include "tls-mqtt.h"
 #include "esphome/core/log.h"
 #include <time.h>
 
-namespace my_tls_mqtt {
+namespace tls-mqtt {
 
-static const char *TAG = "my_tls_mqtt";
+static const char *TAG = "tls-mqtt";
 
-void MyTLSMQTTClient::setup() {
+void TLSMQTTClient::setup() {
   printf("[INFO][%s] Setup started, waiting for WiFi...\n", TAG);
 
   static const char root_ca[] PROGMEM = R"EOF(
@@ -31,13 +31,13 @@ AQELBQADggIBAE7iiV0KAxyQOND1H/lxXPjDj7I3iHpvsCUf7b632IYGjukJhM1y
 v4Hz/MrPU0jtvfZpQtSlET41yBOykh0FX+ou1Nj4ScOt9ZmWnO8m2OG0JAtIIE38
 01S0qcYhyOE2G/93ZCkXufBL713qzXnQv5C/viOykNpKqUgxdKlEC+Hi9i2DcaR1
 e9KUwQUZRhy5j/PEdEglKg3l9dtD4tuTm7kZtB8v32oOjzHTYw+7KdzdZiw/sBtn
-UfhBPORNuay4pJxmY/WrhSMdzFO2q3Gu3MUBcdo27goYKjL9CTF8j/Zz55yctUoV
+UfhBPORNuay4pJx/WrhSMdzFO2q3Gu3MUBcdo27goYKjL9CTF8j/Zz55yctUoV
 aneCWs/ajUX+HypkBTA+c8LGDLnWO2NKq0YD/pnARkAnYGPfUDoHR9gVSp/qRx+Z
-WghiDLZsMwhN1zjtSC0uBWiugF3vTNzYIEFfaPG7Ws3jDrAMMYebQ95JQ+HIBD/R
+WghiDLZsMwhN1zjtSC0uBWiugF3vTNzYIEFfaPG7Ws3jDrAMebQ95JQ+HIBD/R
 PBuHRTBpqKlyDnkSHDHYPiNX3adPoPAcgdF3H2/W0rmoswMWgTlLn1Wu0mrks7/q
 pdWfS6PJ1jty80r2VKsM/Dj3YIDfbjXKdaFU5C+8bhfJGqU3taKauuz0wHVGT3eo
 6FlWkWYtbt4pgdamlwVeZEW+LM7qZEJEsMNPrfC03APKmZsJgpWCDWOKZvkZcvjV
-uYkQ4omYCTX5ohy+knMjdOmdH9c7SpqEWBDC86fiNex+O0XOMEZSa8DA
+uYkQ4oCTX5ohy+knMjdOmdH9c7SpqEWBDC86fiNex+O0XOMEZSa8DA
 -----END CERTIFICATE-----
 
 )EOF";
@@ -59,7 +59,7 @@ uYkQ4omYCTX5ohy+knMjdOmdH9c7SpqEWBDC86fiNex+O0XOMEZSa8DA
   this->initialized_ = false;
 }
 
-void MyTLSMQTTClient::loop() {
+void TLSMQTTClient::loop() {
   if (!WiFi.isConnected()) {
     printf("[WARN][%s] WiFi not connected, waiting...\n", TAG);
     return;
@@ -96,7 +96,7 @@ void MyTLSMQTTClient::loop() {
   }
 }
 
-void MyTLSMQTTClient::publish_message(const std::string &topic, const std::string &payload) {
+void TLSMQTTClient::publish_message(const std::string &topic, const std::string &payload) {
   if (this->mqtt_client.connected()) {
     this->mqtt_client.publish(topic.c_str(), payload.c_str());
     esphome::ESP_LOGI(TAG, "Published test message to topic: %s, payload: %s", topic.c_str(), payload.c_str());
@@ -105,7 +105,7 @@ void MyTLSMQTTClient::publish_message(const std::string &topic, const std::strin
   }
 }
 
-void MyTLSMQTTClient::connect_to_mqtt_() {
+void TLSMQTTClient::connect_to_mqtt_() {
   if (this->username_.empty() || this->password_.empty()) {
     printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
     if (!this->mqtt_client.connect("esphome_client")) {
@@ -124,9 +124,9 @@ void MyTLSMQTTClient::connect_to_mqtt_() {
   
 }
 
-void MyTLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host = host; }
-void MyTLSMQTTClient::set_broker_port(uint16_t port) { this->broker_port = port; }
-void MyTLSMQTTClient::set_username(const std::string &username) { this->username_ = username; }
-void MyTLSMQTTClient::set_password(const std::string &password) { this->password_ = password; }
+void TLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host = host; }
+void TLSMQTTClient::set_broker_port(uint16_t port) { this->broker_port = port; }
+void TLSMQTTClient::set_username(const std::string &username) { this->username_ = username; }
+void TLSMQTTClient::set_password(const std::string &password) { this->password_ = password; }
 
-}  // namespace my_tls_mqtt
+}  // namespace tls-mqtt
