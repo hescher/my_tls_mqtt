@@ -8,7 +8,9 @@ void MyTLSMQTTClient::set_host(const std::string &host, int port) {
 }
 
 void MyTLSMQTTClient::setup() {
-  wifi_client.setCACert(root_ca);  // TLS Root-CA-Zertifikat setzen
+  static BearSSL::X509List cert(root_ca);  // Root-CA als TrustAnchor laden
+  wifi_client.setTrustAnchors(&cert);
+
   mqtt_client.setClient(wifi_client);
   mqtt_client.setServer(broker_host.c_str(), broker_port);
 }
@@ -23,7 +25,7 @@ void MyTLSMQTTClient::loop() {
 void MyTLSMQTTClient::reconnect() {
   while (!mqtt_client.connected()) {
     if (mqtt_client.connect("ESP_TLS_Client")) {
-      ESP_LOGD("TLSMQTT", "Connected to MQTT Broker: %s", broker_host.c_str());
+      ESP_LOGD("my_tls_mqtt", "Connected to MQTT Broker: %s", broker_host.c_str());
     } else {
       delay(5000);
     }
