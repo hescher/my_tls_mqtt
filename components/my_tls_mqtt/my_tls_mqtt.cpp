@@ -73,7 +73,7 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 
 void MyTLSMQTTClient::setup() {
   // NTP-Server zur Zeitsynchronisation
-  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+  configTime(0, 0, "192.168.178.1");  // IP der FritzBox als NTP-Server
 
   // Warten auf Zeitsynchronisation
   while (time(nullptr) < 1609459200) {  // 01.01.2021 als Mindestdatum
