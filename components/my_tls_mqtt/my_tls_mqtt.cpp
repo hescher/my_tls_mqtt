@@ -72,15 +72,19 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 }
 
 void MyTLSMQTTClient::setup() {
-  // NTP-Server zur Zeitsynchronisation
-  configTime(0, 0, "192.168.178.1");  // IP der FritzBox als NTP-Server
-  esphome::ESP_LOGI("my_tls_mqtt", "Resolving NTP server...");
-  IPAddress ntp_ip;
-  if (WiFi.hostByName("pool.ntp.org", ntp_ip)) {
-    esphome::ESP_LOGI("my_tls_mqtt", "NTP server IP: %s", ntp_ip.toString().c_str());
-  } else {
-    esphome::ESP_LOGE("my_tls_mqtt", "Failed to resolve NTP server!");
+  // Stelle sicher, dass WLAN verbunden ist
+  if (!WiFi.isConnected()) {
+    esphome::ESP_LOGI("my_tls_mqtt", "Connecting to WiFi...");
+    while (!WiFi.isConnected()) {
+      delay(500);
+      esphome::ESP_LOGI("my_tls_mqtt", "Waiting for WiFi...");
+    }
   }
+  
+  esphome::ESP_LOGI("my_tls_mqtt", "WiFi connected, starting NTP sync...");
+
+  // NTP-Synchronisation
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   time_t now = time(nullptr);
   int retry = 0;
   while (now < 1609459200 && retry < 30) {  // 30 Sekunden Timeout
@@ -89,21 +93,20 @@ void MyTLSMQTTClient::setup() {
     retry++;
     esphome::ESP_LOGI("my_tls_mqtt", "Waiting for NTP time... (%d)", retry);
   }
-  
+
   if (retry >= 30) {
     esphome::ESP_LOGE("my_tls_mqtt", "NTP synchronization failed, continuing without time sync!");
   } else {
     esphome::ESP_LOGI("my_tls_mqtt", "Time synchronized: %s", ctime(&now));
   }
-  
-  esphome::ESP_LOGI("my_tls_mqtt", "Free heap before TLS handshake: %u", ESP.getFreeHeap());
-  wifi_client.setInsecure();
+
+  // TLS-Setup
   wifi_client.setTrustAnchors(&x509_cert);
   mqtt_client.setClient(wifi_client);
+  //wifi_client.setInsecure();
   mqtt_client.setServer(broker_host.c_str(), broker_port);
-  esphome::ESP_LOGI("my_tls_mqtt", "Free heap before MQTT connect: %u", ESP.getFreeHeap());
+  esphome::ESP_LOGI("my_tls_mqtt", "Free heap: %u", ESP.getFreeHeap());
 }
-
 
 void MyTLSMQTTClient::loop() {
   if (!mqtt_client.connected()) {
