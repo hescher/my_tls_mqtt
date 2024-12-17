@@ -4,6 +4,8 @@ Example with hivemq as tls mqtt broker.
 
 Entries in secrets.yaml: hivemqtt_username: "hiveuser" | hivemqtt_password: "hiveuserpassword"
 
+birth_message, will_message are optional.
+
 ## Konfiguration
 ```yaml
 external_components:
@@ -15,3 +17,9 @@ tls_mqtt:
   port: 8883                                            # TLS-Port
   username: !secret hivemqtt_username                   # Hive Username
   password: !secret hivemqtt_password                   # Hive Passwort
+  (birth_message:
+    topic: "$devicename/status"
+    payload: "online"
+  will_message:
+    topic: "$devicename/status"
+    payload: "offline")
