@@ -34,16 +34,13 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 }
 
 void MyTLSMQTTClient::setup() {
+  // TLS-Zertifikat setzen
   static BearSSL::X509List cert(root_ca);
   wifi_client.setTrustAnchors(&cert);
 
+  // MQTT-Client konfigurieren
   mqtt_client.setClient(wifi_client);
   mqtt_client.setServer(broker_host.c_str(), broker_port);
-
-  // Birth- und Will-Message konfigurieren
-  if (!will_topic.empty() && !will_payload.empty()) {
-    mqtt_client.setWill(will_topic.c_str(), will_payload.c_str(), true, 0);
-  }
 }
 
 void MyTLSMQTTClient::loop() {
@@ -55,15 +52,29 @@ void MyTLSMQTTClient::loop() {
 
 void MyTLSMQTTClient::reconnect() {
   while (!mqtt_client.connected()) {
-    if (mqtt_client.connect("ESP_TLS_Client", username.c_str(), password.c_str(),
-                            will_topic.c_str(), 0, true, will_payload.c_str())) {
-      esphome::ESP_LOGD("my_tls_mqtt", "Connected to MQTT Broker: %s", broker_host.c_str());
+    esphome::ESP_LOGI("my_tls_mqtt", "Attempting MQTT connection to %s...", broker_host.c_str());
+
+    // Will-Message direkt beim connect setzen
+    bool connected = mqtt_client.connect(
+      "ESP_TLS_Client",                          // Client-ID
+      username.c_str(),                          // Benutzername
+      password.c_str(),                          // Passwort
+      will_topic.empty() ? nullptr : will_topic.c_str(),  // Will-Topic
+      0,                                         // QoS für Will-Message
+      true,                                      // Retain für Will-Message
+      will_payload.empty() ? nullptr : will_payload.c_str()  // Will-Payload
+    );
+
+    if (connected) {
+      esphome::ESP_LOGI("my_tls_mqtt", "Connected to MQTT Broker: %s", broker_host.c_str());
 
       // Birth-Message senden
       if (!birth_topic.empty() && !birth_payload.empty()) {
         mqtt_client.publish(birth_topic.c_str(), birth_payload.c_str(), true);
+        esphome::ESP_LOGI("my_tls_mqtt", "Sent birth message to %s", birth_topic.c_str());
       }
     } else {
+      esphome::ESP_LOGE("my_tls_mqtt", "MQTT connection failed, retrying in 5 seconds...");
       delay(5000);
     }
   }
