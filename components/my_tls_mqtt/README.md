@@ -5,7 +5,7 @@ Eine externe ESPHome-Komponente zur Verwendung von TLS-verschlüsselten MQTT-Ver
 ## Konfiguration
 ```yaml
 external_components:
-  - source: github://yourgithubusername/my_tls_mqtt@main
+  - source: github://hescher/my_tls_mqtt@main
     components: [my_tls_mqtt]
 
 my_tls_mqtt:
