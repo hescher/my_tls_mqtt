@@ -3,8 +3,8 @@
 Example with hivemq as tls mqtt broker.
 
 Entries in secrets.yaml:
-  hivemqtt_username: "hiveuser"
-  hivemqtt_password: "hiveuserpassword"
+hivemqtt_username: "hiveuser"
+hivemqtt_password: "hiveuserpassword"
 
 ## Konfiguration
 ```yaml
