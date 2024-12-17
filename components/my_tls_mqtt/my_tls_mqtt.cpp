@@ -25,7 +25,7 @@ void MyTLSMQTTClient::loop() {
 void MyTLSMQTTClient::reconnect() {
   while (!mqtt_client.connected()) {
     if (mqtt_client.connect("ESP_TLS_Client")) {
-      ESP_LOGD("my_tls_mqtt", "Connected to MQTT Broker: %s", broker_host.c_str());
+      esphome::ESP_LOGD("my_tls_mqtt", "Connected to MQTT Broker: %s", broker_host.c_str());
     } else {
       delay(5000);
     }
