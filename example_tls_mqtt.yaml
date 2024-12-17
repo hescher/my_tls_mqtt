@@ -55,3 +55,9 @@ tls_mqtt:
 ota:
   platform: esphome
   password: "OTAPASSWORD"
+
+sensor XYZ:
+    on_value:
+      then:
+        - lambda: |-
+            id(tls_mqtt_client).publish_message("homeassistant/sensor/zaehler_produktion/state", to_string(x));
