@@ -104,9 +104,6 @@ void TLSMQTTClient::publish_message(const std::string &topic, const std::string 
   }
 }
 
-
-
-
 void TLSMQTTClient::connect_to_mqtt_() {
   printf("[INFO][%s] Attempting MQTT connection...\n", TAG);
 
@@ -135,16 +132,15 @@ void TLSMQTTClient::connect_to_mqtt_() {
 
   if (connected) {
     printf("[INFO][%s] MQTT connected successfully!\n", TAG);
-    this->publish_message("test/topic", "Hello, MQTT!");
+    // Sende Birth Message, falls konfiguriert
+    if (!this->birth_topic_.empty() && !this->birth_payload_.empty()) {
+      this->publish_message(this->birth_topic_, this->birth_payload_);
+      printf("[INFO][%s] Sent Birth Message to topic: %s\n", TAG, this->birth_topic_.c_str());
+    }
   } else {
     printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
   }
 }
-
-
-
-
-
 
 void TLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host = host; }
 void TLSMQTTClient::set_broker_port(uint16_t port) { this->broker_port = port; }
