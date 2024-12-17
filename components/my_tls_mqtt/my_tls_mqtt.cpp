@@ -71,8 +71,9 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 }
 
 void MyTLSMQTTClient::setup() {
-  wifi_client.setTrustAnchors(&x509_cert);
+  esphome::ESP_LOGI("my_tls_mqtt", "Free heap before TLS handshake: %u", ESP.getFreeHeap());
   wifi_client.setInsecure();
+  wifi_client.setTrustAnchors(&x509_cert);
   mqtt_client.setClient(wifi_client);
   mqtt_client.setServer(broker_host.c_str(), broker_port);
   esphome::ESP_LOGI("my_tls_mqtt", "Free heap before MQTT connect: %u", ESP.getFreeHeap());
