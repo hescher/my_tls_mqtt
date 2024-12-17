@@ -74,7 +74,7 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 void MyTLSMQTTClient::setup() {
   // Warte auf WLAN-Verbindung durch ESPHome
   esphome::ESP_LOGI("my_tls_mqtt", "Waiting for WiFi to connect...");
-  wl_status_t wifi_status = WiFi.waitForConnectResult();
+  int8_t wifi_status = WiFi.waitForConnectResult();
 
   if (wifi_status != WL_CONNECTED) {
     esphome::ESP_LOGE("my_tls_mqtt", "Failed to connect to WiFi. Status: %d", wifi_status);
@@ -87,14 +87,14 @@ void MyTLSMQTTClient::setup() {
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   time_t now = time(nullptr);
   int retry = 0;
-  while (now < 1609459200 && retry < 15) {  // 30 Sekunden Timeout
+  while (now < 1609459200 && retry < 30) {  // 30 Sekunden Timeout
     delay(1000);
     now = time(nullptr);
     retry++;
     esphome::ESP_LOGI("my_tls_mqtt", "Waiting for NTP time... (%d)", retry);
   }
 
-  if (retry >= 15) {
+  if (retry >= 30) {
     esphome::ESP_LOGE("my_tls_mqtt", "NTP synchronization failed, continuing without time sync!");
   } else {
     esphome::ESP_LOGI("my_tls_mqtt", "Time synchronized: %s", ctime(&now));
@@ -104,9 +104,10 @@ void MyTLSMQTTClient::setup() {
   wifi_client.setTrustAnchors(&x509_cert);
   mqtt_client.setClient(wifi_client);
   mqtt_client.setServer(broker_host.c_str(), broker_port);
+  
   esphome::ESP_LOGI("my_tls_mqtt", "Free heap: %u", ESP.getFreeHeap());
-}
 
+}
 
 
 void MyTLSMQTTClient::loop() {
