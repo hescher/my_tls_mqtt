@@ -72,7 +72,7 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 
 void MyTLSMQTTClient::setup() {
   wifi_client.setTrustAnchors(&x509_cert);
-
+  wifi_client.setInsecure();
   mqtt_client.setClient(wifi_client);
   mqtt_client.setServer(broker_host.c_str(), broker_port);
 }
