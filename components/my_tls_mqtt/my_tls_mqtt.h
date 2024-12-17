@@ -36,7 +36,7 @@ class MyTLSMQTTClient : public esphome::Component {
   std::string will_payload;
 
   const char *root_ca =
-    -----BEGIN CERTIFICATE-----\n"
+    "-----BEGIN CERTIFICATE-----\n"
     "MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\n"
     "TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh\n"
     "cmNoIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDEwHhcNMTUwNjA0MTEwNDM4\n"
