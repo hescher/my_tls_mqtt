@@ -51,7 +51,7 @@ emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
   printf("[INFO][%s] Root CA certificate loaded successfully.\n", TAG);
 
   this->wifi_client.setTrustAnchors(this->trust_anchors_);
-  delete trust_anchors;  // Speicher freigeben
+  delete trust_anchors_;  // Speicher freigeben
   
   // MQTT-Client initialisieren
   this->mqtt_client.setClient(this->wifi_client);
