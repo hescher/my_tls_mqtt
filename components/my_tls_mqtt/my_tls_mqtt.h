@@ -13,6 +13,7 @@ class MyTLSMQTTClient : public esphome::Component {
  public:
   void setup() override;
   void loop() override;
+  void publish_message(const std::string &topic, const std::string &payload);
 
   // Setter-Methoden für Konfigurationsparameter
   void set_broker_host(const std::string &host);
