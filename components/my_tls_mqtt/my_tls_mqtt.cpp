@@ -75,6 +75,7 @@ void MyTLSMQTTClient::setup() {
   wifi_client.setInsecure();
   mqtt_client.setClient(wifi_client);
   mqtt_client.setServer(broker_host.c_str(), broker_port);
+  esphome::ESP_LOGI("my_tls_mqtt", "Free heap before MQTT connect: %u", ESP.getFreeHeap());
 }
 
 
