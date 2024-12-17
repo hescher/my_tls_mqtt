@@ -6,7 +6,7 @@ from esphome.const import CONF_ID
 DEPENDENCIES = ["wifi"]  # WLAN-Abhängigkeit sicherstellen
 
 tls-mqtt_ns = cg.esphome_ns.namespace("tls-mqtt")
-MyTLSMQTTClient = tls-mqtt_ns.class_("TLSMQTTClient", cg.Component)
+TLSMQTTClient = tls-mqtt_ns.class_("TLSMQTTClient", cg.Component)
 
 # Eigene Konstanten definieren
 CONF_HOST = "host"
@@ -18,7 +18,7 @@ CONF_WILL_MESSAGE = "will_message"
 
 CONFIG_SCHEMA = cv.Schema(
     {
-        cv.GenerateID(): cv.declare_id(MyTLSMQTTClient),
+        cv.GenerateID(): cv.declare_id(TLSMQTTClient),
         cv.Required(CONF_HOST): cv.string,
         cv.Required(CONF_PORT): cv.port,
         cv.Optional(CONF_USERNAME): cv.string,
