@@ -1,14 +1,18 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import wifi  # Stelle sicher, dass WiFi geladen wird
-from esphome.const import CONF_ID, CONF_HOST, CONF_PORT, CONF_USERNAME, CONF_PASSWORD
+from esphome.components import wifi  # Stellt sicher, dass WiFi geladen wird
+from esphome.const import CONF_ID
 
-DEPENDENCIES = ["wifi"]  # Stellt sicher, dass WLAN vollständig bereit ist
-CODEOWNERS = ["@hescher"]
+DEPENDENCIES = ["wifi"]  # WLAN-Abhängigkeit sicherstellen
 
 my_tls_mqtt_ns = cg.esphome_ns.namespace("my_tls_mqtt")
 MyTLSMQTTClient = my_tls_mqtt_ns.class_("MyTLSMQTTClient", cg.Component)
 
+# Eigene Konstanten definieren
+CONF_HOST = "host"
+CONF_PORT = "port"
+CONF_USERNAME = "username"
+CONF_PASSWORD = "password"
 CONF_BIRTH_MESSAGE = "birth_message"
 CONF_WILL_MESSAGE = "will_message"
 
