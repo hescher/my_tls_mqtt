@@ -74,12 +74,28 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 void MyTLSMQTTClient::setup() {
   // NTP-Server zur Zeitsynchronisation
   configTime(0, 0, "192.168.178.1");  // IP der FritzBox als NTP-Server
-
-  // Warten auf Zeitsynchronisation
-  while (time(nullptr) < 1609459200) {  // 01.01.2021 als Mindestdatum
-    delay(100);
-    esphome::ESP_LOGI("my_tls_mqtt", "Waiting for NTP time...");
+  esphome::ESP_LOGI("my_tls_mqtt", "Resolving NTP server...");
+  IPAddress ntp_ip;
+  if (WiFi.hostByName("pool.ntp.org", ntp_ip)) {
+    esphome::ESP_LOGI("my_tls_mqtt", "NTP server IP: %s", ntp_ip.toString().c_str());
+  } else {
+    esphome::ESP_LOGE("my_tls_mqtt", "Failed to resolve NTP server!");
   }
+  time_t now = time(nullptr);
+  int retry = 0;
+  while (now < 1609459200 && retry < 30) {  // 30 Sekunden Timeout
+    delay(1000);
+    now = time(nullptr);
+    retry++;
+    esphome::ESP_LOGI("my_tls_mqtt", "Waiting for NTP time... (%d)", retry);
+  }
+  
+  if (retry >= 30) {
+    esphome::ESP_LOGE("my_tls_mqtt", "NTP synchronization failed, continuing without time sync!");
+  } else {
+    esphome::ESP_LOGI("my_tls_mqtt", "Time synchronized: %s", ctime(&now));
+  }
+  
   esphome::ESP_LOGI("my_tls_mqtt", "Free heap before TLS handshake: %u", ESP.getFreeHeap());
   wifi_client.setInsecure();
   wifi_client.setTrustAnchors(&x509_cert);
