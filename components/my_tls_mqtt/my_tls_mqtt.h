@@ -11,6 +11,11 @@ class MyTLSMQTTClient : public esphome::Component {
   void set_host(const std::string &host, int port);
   void set_username(const std::string &username);
   void set_password(const std::string &password);
+  void set_discovery(bool discovery);
+  void set_discovery_prefix(const std::string &prefix);
+  void set_birth_message(const std::string &topic, const std::string &payload);
+  void set_will_message(const std::string &topic, const std::string &payload);
+
   void setup() override;
   void loop() override;
 
@@ -22,6 +27,13 @@ class MyTLSMQTTClient : public esphome::Component {
   int broker_port;
   std::string username;
   std::string password;
+  bool discovery = false;
+  std::string discovery_prefix;
+
+  std::string birth_topic;
+  std::string birth_payload;
+  std::string will_topic;
+  std::string will_payload;
 
   const char *root_ca =
     "-----BEGIN CERTIFICATE-----\n"
