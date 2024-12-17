@@ -127,5 +127,14 @@ void TLSMQTTClient::set_broker_host(const std::string &host) { this->broker_host
 void TLSMQTTClient::set_broker_port(uint16_t port) { this->broker_port = port; }
 void TLSMQTTClient::set_username(const std::string &username) { this->username_ = username; }
 void TLSMQTTClient::set_password(const std::string &password) { this->password_ = password; }
+void MyTLSMQTTClient::set_birth_message(const std::string &topic, const std::string &payload) {
+  this->birth_topic_ = topic;
+  this->birth_payload_ = payload;
+}
+
+void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::string &payload) {
+  this->will_topic_ = topic;
+  this->will_payload_ = payload;
+}
 
 }  // namespace tls_mqtt
