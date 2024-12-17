@@ -1,4 +1,5 @@
 #include "my_tls_mqtt.h"
+#include <time.h>
 
 namespace my_tls_mqtt {
 
@@ -71,6 +72,14 @@ void MyTLSMQTTClient::set_will_message(const std::string &topic, const std::stri
 }
 
 void MyTLSMQTTClient::setup() {
+  // NTP-Server zur Zeitsynchronisation
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+
+  // Warten auf Zeitsynchronisation
+  while (time(nullptr) < 1609459200) {  // 01.01.2021 als Mindestdatum
+    delay(100);
+    esphome::ESP_LOGI("my_tls_mqtt", "Waiting for NTP time...");
+  }
   esphome::ESP_LOGI("my_tls_mqtt", "Free heap before TLS handshake: %u", ESP.getFreeHeap());
   wifi_client.setInsecure();
   wifi_client.setTrustAnchors(&x509_cert);
