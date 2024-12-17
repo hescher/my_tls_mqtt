@@ -1,5 +1,6 @@
 # tls_mqttClient
 
+Example with hivemq as tls mqtt broker.
 
 ## Konfiguration
 ```yaml
@@ -8,5 +9,7 @@ external_components:
     components: [tls_mqtt]
 
 tls_mqtt:
-  host: "broker.hivemq.com"  # MQTT-Broker-Adresse
-  port: 8883                # TLS-Port
+  host: "abcdefghijklmnopqrtuvwxyz.s1.eu.hivemq.cloud"              # MQTT-Broker-Adresse
+  port: 8883                             # TLS-Port
+  username: !secret hivemqtt_username    # Hive Username
+  password: !secret hivemqtt_password    # Hive Passwort
