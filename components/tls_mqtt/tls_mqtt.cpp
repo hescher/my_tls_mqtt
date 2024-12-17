@@ -105,6 +105,8 @@ void TLSMQTTClient::publish_message(const std::string &topic, const std::string 
 }
 
 
+
+
 void TLSMQTTClient::connect_to_mqtt_() {
   if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
     // Konfiguriere die Will-Message
@@ -127,10 +129,48 @@ void TLSMQTTClient::connect_to_mqtt_() {
 
   printf("[INFO][%s] MQTT connected successfully!\n", TAG);
 
-  // Birth-Message senden, falls definiert
-  if (!this->birth_topic_.empty() && !this->birth_payload_.empty()) {
+bool connected;
+if (this->username_.empty() || this->password_.empty()) {
+    printf("[INFO][%s] Attempting MQTT connection without authentication...\n", TAG);
+
+    // LWT setzen, falls vorhanden
+    if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
+        connected = this->mqtt_client.connect("esphome_client", 
+                                              this->will_topic_.c_str(), 
+                                              this->will_payload_.c_str(), 
+                                              true);
+    } else {
+        connected = this->mqtt_client.connect("esphome_client");
+    }
+} else {
+    printf("[INFO][%s] Attempting MQTT connection with authentication...\n", TAG);
+
+    // LWT setzen, falls vorhanden
+    if (!this->will_topic_.empty() && !this->will_payload_.empty()) {
+        connected = this->mqtt_client.connect("esphome_client", 
+                                              this->username_.c_str(), 
+                                              this->password_.c_str(), 
+                                              this->will_topic_.c_str(), 
+                                              this->will_payload_.c_str(), 
+                                              true);
+    } else {
+        connected = this->mqtt_client.connect("esphome_client", 
+                                              this->username_.c_str(), 
+                                              this->password_.c_str());
+    }
+}
+
+if (!connected) {
+    printf("[ERROR][%s] MQTT connection failed, retrying...\n", TAG);
+    return;
+}
+printf("[INFO][%s] MQTT connected successfully!\n", TAG);
+
+// Birth-Message senden, falls definiert
+if (!this->birth_topic_.empty() && !this->birth_payload_.empty()) {
     this->publish_message(this->birth_topic_, this->birth_payload_);
-  }
+}
+
 }
 
 
