@@ -5,8 +5,8 @@ from esphome.const import CONF_ID
 
 DEPENDENCIES = ["wifi"]  # WLAN-Abhängigkeit sicherstellen
 
-tls-mqtt_ns = cg.esphome_ns.namespace("tls-mqtt")
-TLSMQTTClient = tls-mqtt_ns.class_("TLSMQTTClient", cg.Component)
+tls_mqtt_ns = cg.esphome_ns.namespace("tls_mqtt")
+TLSMQTTClient = tls_mqtt_ns.class_("TLSMQTTClient", cg.Component)
 
 # Eigene Konstanten definieren
 CONF_HOST = "host"
