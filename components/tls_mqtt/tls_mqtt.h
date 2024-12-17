@@ -20,8 +20,8 @@ class TLSMQTTClient : public esphome::Component {
   void set_broker_port(uint16_t port);
   void set_username(const std::string &username);
   void set_password(const std::string &password);
-
-
+  void set_birth_message(const std::string &topic, const std::string &payload);
+  void set_will_message(const std::string &topic, const std::string &payload);
 
  private:
   // Private Methoden
@@ -32,6 +32,10 @@ class TLSMQTTClient : public esphome::Component {
   uint16_t broker_port;
   std::string username_;
   std::string password_;
+  std::string birth_topic_;
+  std::string birth_payload_;
+  std::string will_topic_;
+  std::string will_payload_;
 
   bool initialized_ = false;  // Initialisierungstatus
   BearSSL::X509List *trust_anchors_;  // Root-CA Zertifikate
