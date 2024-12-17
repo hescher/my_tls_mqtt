@@ -87,14 +87,14 @@ void MyTLSMQTTClient::setup() {
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
   time_t now = time(nullptr);
   int retry = 0;
-  while (now < 1609459200 && retry < 30) {  // 30 Sekunden Timeout
+  while (now < 1609459200 && retry < 15) {  // 30 Sekunden Timeout
     delay(1000);
     now = time(nullptr);
     retry++;
     esphome::ESP_LOGI("my_tls_mqtt", "Waiting for NTP time... (%d)", retry);
   }
 
-  if (retry >= 30) {
+  if (retry >= 15) {
     esphome::ESP_LOGE("my_tls_mqtt", "NTP synchronization failed, continuing without time sync!");
   } else {
     esphome::ESP_LOGI("my_tls_mqtt", "Time synchronized: %s", ctime(&now));
