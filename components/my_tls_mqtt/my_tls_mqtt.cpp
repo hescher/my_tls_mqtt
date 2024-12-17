@@ -99,9 +99,9 @@ void MyTLSMQTTClient::loop() {
 void MyTLSMQTTClient::publish_message(const std::string &topic, const std::string &payload) {
   if (this->mqtt_client.connected()) {
     this->mqtt_client.publish(topic.c_str(), payload.c_str());
-    ESP_LOGI(TAG, "Published test message to topic: %s, payload: %s", topic.c_str(), payload.c_str());
+    esphome::ESP_LOGI(TAG, "Published test message to topic: %s, payload: %s", topic.c_str(), payload.c_str());
   } else {
-    ESP_LOGW(TAG, "MQTT client not connected. Cannot publish message.");
+    esphome::ESP_LOGW(TAG, "MQTT client not connected. Cannot publish message.");
   }
 }
 
