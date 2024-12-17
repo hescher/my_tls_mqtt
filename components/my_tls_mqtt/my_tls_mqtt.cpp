@@ -6,7 +6,7 @@ namespace my_tls_mqtt {
 
 static const char *TAG = "my_tls_mqtt";
 
-const char root_ca[] PROGMEM = R"EOF(
+static const char root_ca[] PROGMEM = R"EOF(
 MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw
 TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh
 cmNoIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDEwHhcNMTUwNjA0MTEwNDM4
