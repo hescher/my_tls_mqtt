@@ -2,7 +2,9 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.const import CONF_ID, CONF_HOST, CONF_PORT
 
-# Namespace erstellen
+CODEOWNERS = ["@hescher"]
+DEPENDENCIES = ["network"]  # Netzwerkabhängigkeit
+
 my_tls_mqtt_ns = cg.esphome_ns.namespace("my_tls_mqtt")
 MyTLSMQTTClient = my_tls_mqtt_ns.class_("MyTLSMQTTClient", cg.Component)
 
