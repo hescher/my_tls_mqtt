@@ -120,6 +120,7 @@ void MyTLSMQTTClient::connect_to_mqtt_() {
     }
   }
   printf("[INFO][%s] MQTT connected successfully!\n", TAG);
+  this->publish_message("test/topic", "Hello, MQTT!");
   
 }
 
