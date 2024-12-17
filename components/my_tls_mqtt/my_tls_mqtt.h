@@ -19,16 +19,19 @@ class MyTLSMQTTClient : public esphome::Component {
   void set_broker_port(uint16_t port);
   void set_username(const std::string &username);
   void set_password(const std::string &password);
+  void set_device_name(const std::string &name);
 
  private:
   // Private Methoden
   void connect_to_mqtt_();
+  void send_discovery_message_();
 
   // Member-Variablen
   std::string broker_host;
   uint16_t broker_port;
   std::string username_;
   std::string password_;
+  std::string device_name;
 
   bool initialized_ = false;  // Initialisierungstatus
   BearSSL::X509List *trust_anchors_;  // Root-CA Zertifikate
