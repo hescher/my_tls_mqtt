@@ -7,7 +7,7 @@
 #include <time.h>
 #include <string>
 
-namespace tls-mqtt {
+namespace tls_mqtt {
 
 class TLSMQTTClient : public esphome::Component {
  public:
