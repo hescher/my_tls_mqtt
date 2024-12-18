@@ -6,7 +6,6 @@
 #include <BearSSLHelpers.h>
 #include <time.h>
 #include <string>
-#include "esphome/core/logger.h"
 
 namespace tls_mqtt {
 
@@ -24,12 +23,11 @@ class TLSMQTTClient : public esphome::Component {
   void set_birth_message(const std::string &topic, const std::string &payload);
   void set_will_message(const std::string &topic, const std::string &payload);
   void log_message(const std::string &log_level, const std::string &message);
-  void log(int level, const char *tag, const char *message) override;
-
 
  private:
   // Private Methoden
   void connect_to_mqtt_();
+  void log(int level, const char *tag, const char *message) override;
 
   // Member-Variablen
   std::string broker_host;
