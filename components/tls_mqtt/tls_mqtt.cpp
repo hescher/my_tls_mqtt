@@ -158,7 +158,7 @@ void TLSMQTTClient::set_will_message(const std::string &topic, const std::string
   this->will_payload_ = payload;
 }
 
-oid TLSMQTTClient::log_message(const std::string &level, const std::string &message) {
+void TLSMQTTClient::log_message(const std::string &level, const std::string &message) {
   if (!this->mqtt_client.connected()) {
     ESP_LOGW(TAG, "MQTT client not connected. Cannot log message.");
     return;
