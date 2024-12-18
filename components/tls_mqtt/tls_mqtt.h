@@ -22,6 +22,8 @@ class TLSMQTTClient : public esphome::Component {
   void set_password(const std::string &password);
   void set_birth_message(const std::string &topic, const std::string &payload);
   void set_will_message(const std::string &topic, const std::string &payload);
+  void log_message(const std::string &log_level, const std::string &message);
+
 
  private:
   // Private Methoden
