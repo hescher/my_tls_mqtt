@@ -156,4 +156,11 @@ void TLSMQTTClient::set_will_message(const std::string &topic, const std::string
   this->will_payload_ = payload;
 }
 
+void TLSMQTTClient::log_message(const std::string &log_level, const std::string &message) {
+  if (this->mqtt_client.connected()) {
+    std::string topic = "homeassistant/logs/" + log_level;
+    this->mqtt_client.publish(topic.c_str(), message.c_str());
+  }
+}
+
 }  // namespace tls_mqtt
