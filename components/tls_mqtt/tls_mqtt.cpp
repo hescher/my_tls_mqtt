@@ -158,20 +158,17 @@ void TLSMQTTClient::set_will_message(const std::string &topic, const std::string
   this->will_payload_ = payload;
 }
 
-void TLSMQTTClient::log_message(const std::string &log_level, const std::string &message) {
-  if (this->mqtt_client.connected()) {
-    std::string topic = "homeassistant/logs/" + log_level;
-    this->mqtt_client.publish(topic.c_str(), message.c_str());
-  }
-}
-
-// Überschreibe `log`-Methode für ESPHome-Logger
-void TLSMQTTClient::log(int level, const char *tag, const char *message) {
+oid TLSMQTTClient::log_message(const std::string &level, const std::string &message) {
   if (!this->mqtt_client.connected()) {
+    ESP_LOGW(TAG, "MQTT client not connected. Cannot log message.");
     return;
   }
 
-  // Konvertiere Log-Level in lesbares Format
+  std::string topic = "homeassistant/logs/" + level;
+  this->mqtt_client.publish(topic.c_str(), message.c_str());
+}
+
+void TLSMQTTClient::log(int level, const char *tag, const char *message) {
   const char *level_str = "";
   switch (level) {
     case esphome::LOG_LEVEL_VERBOSE: level_str = "verbose"; break;
@@ -179,11 +176,12 @@ void TLSMQTTClient::log(int level, const char *tag, const char *message) {
     case esphome::LOG_LEVEL_INFO: level_str = "info"; break;
     case esphome::LOG_LEVEL_WARN: level_str = "warn"; break;
     case esphome::LOG_LEVEL_ERROR: level_str = "error"; break;
-    case esphome::LOG_LEVEL_NONE: level_str = "none"; break;
+    default: level_str = "none";
   }
 
-  // MQTT-Nachricht veröffentlichen
-  std::string topic = "homeassistant/logs/" + std::string(level_str);
-  this->mqtt_client.publish(topic.c_str(), message);
+  std::string full_message = std::string(tag) + ": " + message;
+  this->log_message(level_str, full_message);
 }
+
+
 }  // namespace tls_mqtt
