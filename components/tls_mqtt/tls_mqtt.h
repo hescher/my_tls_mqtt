@@ -27,7 +27,7 @@ class TLSMQTTClient : public esphome::Component {
  private:
   // Private Methoden
   void connect_to_mqtt_();
-  void log(int level, const char *tag, const char *message) override;
+  void log(int level, const char *tag, const char *message);
 
   // Member-Variablen
   std::string broker_host;
