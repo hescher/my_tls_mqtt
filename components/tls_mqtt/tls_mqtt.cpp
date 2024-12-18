@@ -7,8 +7,6 @@ namespace tls_mqtt {
 static const char *TAG = "tls_mqtt";
 
 void TLSMQTTClient::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up TLS MQTT logger...");
-  esphome::Logger::add_log_target(this);  // Registriere `tls_mqtt` als Logging-Ziel
   printf("[INFO][%s] Setup started, waiting for WiFi...\n", TAG);
 
 static const char root_ca[] PROGMEM = R"EOF(
@@ -167,21 +165,5 @@ void TLSMQTTClient::log_message(const std::string &level, const std::string &mes
   std::string topic = "homeassistant/logs/" + level;
   this->mqtt_client.publish(topic.c_str(), message.c_str());
 }
-
-void TLSMQTTClient::log(int level, const char *tag, const char *message) {
-  const char *level_str = "";
-  switch (level) {
-    case esphome::LOG_LEVEL_VERBOSE: level_str = "verbose"; break;
-    case esphome::LOG_LEVEL_DEBUG: level_str = "debug"; break;
-    case esphome::LOG_LEVEL_INFO: level_str = "info"; break;
-    case esphome::LOG_LEVEL_WARN: level_str = "warn"; break;
-    case esphome::LOG_LEVEL_ERROR: level_str = "error"; break;
-    default: level_str = "none";
-  }
-
-  std::string full_message = std::string(tag) + ": " + message;
-  this->log_message(level_str, full_message);
-}
-
 
 }  // namespace tls_mqtt
