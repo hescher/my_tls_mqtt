@@ -156,14 +156,4 @@ void TLSMQTTClient::set_will_message(const std::string &topic, const std::string
   this->will_payload_ = payload;
 }
 
-void TLSMQTTClient::log_message(const std::string &level, const std::string &message) {
-  if (!this->mqtt_client.connected()) {
-    printf(TAG, "MQTT client not connected. Cannot log message.");
-    return;
-  }
-
-  std::string topic = "homeassistant/logs/" + level;
-  this->mqtt_client.publish(topic.c_str(), message.c_str());
-}
-
 }  // namespace tls_mqtt
